@@ -32,12 +32,13 @@ non_standard_aa_conversion = {'ARN':'ARG','ASH':'ASP','GLH':'GLU','LYN':'LYS','H
 jobDJ = queue.JobDJ([("localhost", 19)], max_retries = 3, max_failures = 10) # the key issue that makes the running on multiple procs possible...
 
 for residue in complex_structure.residue:
+ # Here, I was only interested in the residues from chain B, you can remove this if not applicable to you.
     if residue.chain != 'B':
         continue
 
-    # Want to put in different ligands, right? Then to save the file name as part of the ligand.
-
-    if int(residue.resnum) != 222:
+ # Want to put in different ligands, right? Then to save the file name as part of the ligand.
+    # if you need to restart the docking, you can enter the last processed residue number here, 
+    if int(residue.resnum) <= 222:
         continue 
 
     original_residue = residue
@@ -65,7 +66,7 @@ for residue in complex_structure.residue:
         modified_file_name = f'{original_chain_id}_{original_residue_name}_{residue_index}_{new_residue_name}.mae'
         #"""
         
-
+# Note - the grid spacing and position is highly specific to your particular protein, please use your own values (x,y,z) for the 'GRID_CENTER' below.
         grid_gen_spec = f"JOBNAME   gridgen\nOUTPUTDIR   Output/\nGRID_CENTER   -1.95, -6.80, -13.31\nRECEP_FILE   {modified_file_name}\nGRIDFILE   {modified_file_name[:-4]}_min_grid.zip"
         grid_gen_file_name = f"{modified_file_name[:-4]}_grid_gen.inp"
         with open(grid_gen_file_name, "w") as grid_gen_inp_file:
