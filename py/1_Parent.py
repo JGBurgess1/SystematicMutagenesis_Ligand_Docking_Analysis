@@ -74,7 +74,7 @@ def Minimize_prime(mut_file_name):
     with open(minimiz_file_name, "w") as minimiz_inp_file:
         minimiz_inp_file.write(minimiz_file_text)
     minimize_job = queue.JobControlJob(["prime", minimiz_file_name])
-    jobDJ.add(minimize_job)
+    jobDJ.addJob(minimize_job)
     print("JobDJ_Added", file=sys.stderr)
     #Remember to clean up the unminimized file!?
     #And the minimize_inp_file
