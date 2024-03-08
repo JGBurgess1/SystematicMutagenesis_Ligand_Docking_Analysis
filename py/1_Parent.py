@@ -10,8 +10,8 @@ import sys
 parser = argparse.ArgumentParser(description="Perform mutations, grid generation, and docking for protein-ligand interactions.")
 parser.add_argument("-c", "--complex", required=True, help="Path to the protein structure file (mae format)")
 parser.add_argument("-l", "--ligand", required=True, help="Path to the ligand structure file (mae format)")
-parser.add_argument("-pos","--position", required=True, choices = ['0', '1', '2', '3', '4', '5', '6', '7', '8'], help="position within the queue. Allowed values 0, 1, 2, 3, 4, 5, 6, 7, 8")
-parser.add_argument("--chain", required=False, default='ALL', help="Specify chains to mutate, or omit for ALL (default)")
+# parser.add_argument("-pos","--position", required=True, choices = ['0', '1', '2', '3', '4', '5', '6', '7', '8'], help="position within the queue. Allowed values 0, 1, 2, 3, 4, 5, 6, 7, 8")
+# parser.add_argument("--chain", required=False, default='ALL', help="Specify chains to mutate, or omit for ALL (default)")
 parser.add_argument("--cpus", required=True, type=int, help="Enter the number of CPUs available")
 
 args = parser.parse_args()
@@ -32,16 +32,17 @@ Error_Message = ''''''
 
 
 def Mutate(pos):
-    chain_choice = args.chain.trim().toUpper()
-    pos = int(args.position)
-    chain_number = 0
-    for chain in complex_structure.chain:
-        print(chain, file=sys.stderr)
-        chain_number+=1
-    if chain_number>20:
-        Error_Message+="Too many chains {>20} please use fewer chains in your input structure"
-        # some exit code here
-        exit()
+    # chain_choice = args.chain.trim().toUpper()
+    # pos = int(args.position)
+    # chain_number = 0
+    #for chain in complex_structure.chain:
+    #    print(chain, file=sys.stderr)
+    #    chain_number+=1
+    #if chain_number>20:
+    #    Error_Message+="Too many chains {>20} please use fewer chains in your input structure"
+    #    # some exit code here
+    #
+    #    exit()
     for residue in complex_structure.residue:
         #handle long scripts here.
         original_residue = residue
