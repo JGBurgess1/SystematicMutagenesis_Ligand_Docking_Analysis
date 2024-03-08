@@ -123,5 +123,5 @@ def Dock(grid_file_name):
 def Analyse():
     pass
 
-if __name__ == __main__:
+if __name__ == '__main__':
     Mutate(1)
