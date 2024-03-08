@@ -36,6 +36,7 @@ def Mutate(pos):
     pos = int(args.position)
     chain_number = 0
     for chain in complex_structure.chain:
+        print(chain, file=sys.stderr)
         chain_number+=1
     if chain_number>20:
         Error_Message+="Too many chains {>20} please use fewer chains in your input structure"
