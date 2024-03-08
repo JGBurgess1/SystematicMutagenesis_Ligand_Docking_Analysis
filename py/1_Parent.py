@@ -5,6 +5,7 @@ from schrodinger.forcefield.minimizer import minimize_structure, minimize_substr
 
 import argparse
 import os
+import sys
 
 parser = argparse.ArgumentParser(description="Perform mutations, grid generation, and docking for protein-ligand interactions.")
 parser.add_argument("-c", "--complex", required=True, help="Path to the protein structure file (mae format)")
@@ -72,10 +73,11 @@ def Minimize_prime(mut_file_name):
         minimiz_inp_file.write(minimiz_file_text)
     minimize_job = queue.JobControlJob(["prime", minimiz_file_name])
     jobDJ.add(minimize_job)
-
+    print("JobDJ_Added", file=sys.stderr)
     #Remember to clean up the unminimized file!?
     #And the minimize_inp_file
     jobDJ.run()
+    print("JobDJ_Run", file=sys.stderr)
     quit()
 
     os.remove(f"{mut_file_name}")
