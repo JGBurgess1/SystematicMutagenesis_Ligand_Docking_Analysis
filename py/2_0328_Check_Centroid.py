@@ -61,6 +61,6 @@ ligand_atoms = analyze.evaluate_asl(complex_structure, "ligand")
 ligand = analyze.find_ligands(complex_structure)
 print(ligand)
 
-centroid = transform.get_centroid(ligand.st)
+centroid = transform.get_centroid(ligand[0].st)
 
 print(centroid)
