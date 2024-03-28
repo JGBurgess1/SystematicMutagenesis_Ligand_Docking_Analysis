@@ -24,6 +24,10 @@ complex_structure = structure.StructureReader.read(args.complex)
 ligand_structure = structure.StructureReader.read(args.ligand)
 
 ligand_atoms = analyze.evaluate_asl(complex_structure, "ligand")
-centroid = transform.get_centroid(ligand_atoms)
+
+ligand = analyze.find_ligands(complex_structure)
+print(ligand)
+
+centroid = transform.get_centroid(ligand[0])
 
 print(centroid)
