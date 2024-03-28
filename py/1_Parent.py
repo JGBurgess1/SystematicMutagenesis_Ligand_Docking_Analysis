@@ -29,6 +29,7 @@ non_standard_aa_conversion = {'ARN':'ARG','ASH':'ASP','GLH':'GLU','LYN':'LYS','H
 
 jobDJ = queue.JobDJ([("localhost", int(args.cpus))], max_retries = 3, max_failures = 10) # the key issue that makes the running on multiple procs possible...
 
+global job_DJ_counter
 job_DJ_counter = 0
 
 Error_Message = ''''''
