@@ -150,4 +150,5 @@ def Analyse():
     pass
 
 if __name__ == '__main__':
+    job_DJ_counter = 0
     Mutate(1)
