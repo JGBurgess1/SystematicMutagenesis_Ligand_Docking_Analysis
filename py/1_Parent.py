@@ -47,6 +47,7 @@ def Mutate(pos):
     #    # some exit code here
     #
     #    exit()
+    job_counter = 0
     for residue in complex_structure.residue:
         #handle long scripts here.
         original_residue = residue
@@ -70,10 +71,10 @@ def Mutate(pos):
             build.mutate(mutated_structure, original_residue.atom[1], new_residue_name)
             with structure.StructureWriter(mutated_file_name) as writer:
                 writer.append(mutated_structure)
-            Minimize_prime(mutated_file_name, mutated_structure)
+            Minimize_prime(mutated_file_name, mutated_structure, job_counter)
             #Minimize_macromodel(mutated_file_name, mutated_structure)
 
-def Minimize_prime(mut_file_name, mut_structure):
+def Minimize_prime(mut_file_name, mut_structure, job_counter):
     minimiz_file_text = f"STRUCT_FILE {mut_file_name}\nPRIME_TYPE  REAL_MIN\nSELECT  asl = all\nUSE_CRYSTAL_SYMMETRY  no\nUSE_RANDOM_SEED yes\nSEED  0\nEXT_DIEL  80.00\nUSE_MEMBRANE  yes"
     minimiz_file_name = f"{mut_file_name[:-4]}_minimiz.inp"
     with open(minimiz_file_name, "w") as minimiz_inp_file:
@@ -82,9 +83,9 @@ def Minimize_prime(mut_file_name, mut_structure):
     jobDJ.addJob(minimize_job)
     #Remember to clean up the unminimized file!?
     #And the minimize_inp_file
-    job_DJ_counter += 1
-    if job_DJ_counter == 600:
-        job_DJ_counter = 0
+    job_counter += 1
+    if job_counter == 600:
+        job_counter = 0
         jobDJ.run()
     
 def Minimize_macromodel(mut_file_name, mut_structure):
