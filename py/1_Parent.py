@@ -1,7 +1,8 @@
-from schrodinger import structure#, utility
+from schrodinger import structure #,  utility
 from schrodinger.job import queue
-from schrodinger.structutils import build, analyze
+from schrodinger.structutils import build, analyze, transform
 from schrodinger.forcefield.minimizer import minimize_structure, minimize_substructure, MinimizationOptions
+
 
 import argparse
 import os
@@ -66,9 +67,10 @@ def Mutate(pos):
             build.mutate(mutated_structure, original_residue.atom[1], new_residue_name)
             with structure.StructureWriter(mutated_file_name) as writer:
                 writer.append(mutated_structure)
-            Minimize_prime(mutated_file_name)
+            Minimize_prime(mutated_file_name, mutated_structure)
+            #Minimize_macromodel(mutated_file_name)
 
-def Minimize_prime(mut_file_name):
+def Minimize_prime(mut_file_name, mut_structure):
     minimiz_file_text = f"STRUCT_FILE {mut_file_name}\nPRIME_TYPE  REAL_MIN\nSELECT  asl = all\nUSE_CRYSTAL_SYMMETRY  no\nUSE_RANDOM_SEED yes\nSEED  0\nEXT_DIEL  80.00\nUSE_MEMBRANE  yes"
     minimiz_file_name = f"{mut_file_name[:-4]}_minimiz.inp"
     with open(minimiz_file_name, "w") as minimiz_inp_file:
@@ -85,7 +87,7 @@ def Minimize_prime(mut_file_name):
     os.remove(f"{mut_file_name}")
     os.remove(f"{minimiz_file_name}")
 
-def Minimize_macromodel(mut_file_name):
+def Minimize_macromodel(mut_file_name, mut_structure):
     new_comfile_name = f'COM_FILE_{mut_file_name[:-4]}.com'
     # read in the com file.
     with open('mmod_mini_7.com', 'r') as comfile:
@@ -97,14 +99,31 @@ def Minimize_macromodel(mut_file_name):
             new_comfile.write(comfile_string)
         mmodel_min_job = queue.JobControlJob(['macromodel', new_comfile_name])
         jobDJ.addJob(mmodel_min_job)    
-    pass
+    GenGrid(mut_file_name?, mut_structure)
 
 
-def GenGrid(min_file_name):
+def GenGrid(min_file_name, mut_structure):
     # remove ligands here from min file.
-    ligand_atoms = analyze.evaluate_asl(mutated_structure, "ligand")
-    mutated_structure.deleteAtoms(ligand_atoms)
-##
+    # need to read the minimized structure file.
+    # then remove the ligand>?!
+
+    # Look at minimized structure.
+    # (1) Extract the co-ordinates of the ligand.
+    # (2) Remove the ligand.
+    # (3) Set the grid centre to the co-ordinates of the ligand.
+
+    ligand_atoms = analyze.evaluate_asl(mut_structure, "ligand")
+    centroid = transform.get_centroid(ligand_atoms)
+    # Test this centroid option. -> what is the output?
+    
+    # Ligand co-ordinates.
+    # Atoms co-ordinates from schrodinger.
+
+    mut_structure.deleteAtoms(ligand_atoms)
+###
+    
+    # Then want to confirm the grid center of the files that were minimized?
+    # Can you get the positions from the ligand?
 
     #check the grid center for the files minimized
     grid_gen_spec = f"JOBNAME   gridgen\nGRID_CENTER   -1.95, -6.80, -13.31\nRECEP_FILE   {min_file_name}\nGRIDFILE   {min_file_name[:-4]}_grid.zip"
@@ -113,11 +132,15 @@ def GenGrid(min_file_name):
         grid_gen_inp_file.write(grid_gen_spec)  
     grid_gen_job = queue.JobControlJob(["glide", grid_gen_file_name])
     Dock(f"{min_file_name}_grid.zip")
+
+# Save the grid_gen_file (receptor)
+
     pass
 
 def Dock(grid_file_name):
-    #remove ligand from the minimized file
-    #then dock ligands to the file
+    # then dock ligands to the file
+    # Do
+
     pass
 
 def Analyse():
