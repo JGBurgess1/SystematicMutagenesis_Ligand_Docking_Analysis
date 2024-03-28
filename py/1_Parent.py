@@ -68,7 +68,7 @@ def Mutate(pos):
             with structure.StructureWriter(mutated_file_name) as writer:
                 writer.append(mutated_structure)
             Minimize_prime(mutated_file_name, mutated_structure)
-            #Minimize_macromodel(mutated_file_name)
+            #Minimize_macromodel(mutated_file_name, mutated_structure)
 
 def Minimize_prime(mut_file_name, mut_structure):
     minimiz_file_text = f"STRUCT_FILE {mut_file_name}\nPRIME_TYPE  REAL_MIN\nSELECT  asl = all\nUSE_CRYSTAL_SYMMETRY  no\nUSE_RANDOM_SEED yes\nSEED  0\nEXT_DIEL  80.00\nUSE_MEMBRANE  yes"
@@ -99,8 +99,10 @@ def Minimize_macromodel(mut_file_name, mut_structure):
             new_comfile.write(comfile_string)
         mmodel_min_job = queue.JobControlJob(['macromodel', new_comfile_name])
         jobDJ.addJob(mmodel_min_job)    
-    GenGrid(mut_file_name?, mut_structure)
+    GenGrid(mut_file_name, mut_structure)
 
+# GenGrid - mutation_file_name
+    # minimized_file_name
 
 def GenGrid(min_file_name, mut_structure):
     # remove ligands here from min file.
@@ -113,11 +115,9 @@ def GenGrid(min_file_name, mut_structure):
     # (3) Set the grid centre to the co-ordinates of the ligand.
 
     ligand_atoms = analyze.evaluate_asl(mut_structure, "ligand")
-    centroid = transform.get_centroid(ligand_atoms)
-    # Test this centroid option. -> what is the output?
-    
-    # Ligand co-ordinates.
-    # Atoms co-ordinates from schrodinger.
+
+    ligand = analyze.find_ligands(mut_structure)
+    centroid = transform.get_centroid(ligand[0].st)
 
     mut_structure.deleteAtoms(ligand_atoms)
 ###
@@ -126,7 +126,7 @@ def GenGrid(min_file_name, mut_structure):
     # Can you get the positions from the ligand?
 
     #check the grid center for the files minimized
-    grid_gen_spec = f"JOBNAME   gridgen\nGRID_CENTER   -1.95, -6.80, -13.31\nRECEP_FILE   {min_file_name}\nGRIDFILE   {min_file_name[:-4]}_grid.zip"
+    grid_gen_spec = f"JOBNAME   gridgen\nGRID_CENTER   {centroid[0]}, {centroid[1]}, {centroid[2]}\nRECEP_FILE   {min_file_name}\nGRIDFILE   {min_file_name[:-4]}_grid.zip"
     grid_gen_file_name = f"{min_file_name[:-4]}_grid_gen.inp"
     with open(grid_gen_file_name, "w") as grid_gen_inp_file:
         grid_gen_inp_file.write(grid_gen_spec)  
