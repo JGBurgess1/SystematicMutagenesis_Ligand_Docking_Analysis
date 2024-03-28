@@ -29,6 +29,8 @@ non_standard_aa_conversion = {'ARN':'ARG','ASH':'ASP','GLH':'GLU','LYN':'LYS','H
 
 jobDJ = queue.JobDJ([("localhost", int(args.cpus))], max_retries = 3, max_failures = 10) # the key issue that makes the running on multiple procs possible...
 
+job_DJ_counter = 0
+
 Error_Message = ''''''
 
 
@@ -77,16 +79,13 @@ def Minimize_prime(mut_file_name, mut_structure):
         minimiz_inp_file.write(minimiz_file_text)
     minimize_job = queue.JobControlJob(["prime", minimiz_file_name])
     jobDJ.addJob(minimize_job)
-    print("JobDJ_Added", file=sys.stderr)
     #Remember to clean up the unminimized file!?
     #And the minimize_inp_file
-    jobDJ.run()
-    print("JobDJ_Run", file=sys.stderr)
-    quit()
-
-    os.remove(f"{mut_file_name}")
-    os.remove(f"{minimiz_file_name}")
-
+    job_DJ_counter += 1
+    if job_DJ_counter == 600:
+        job_DJ_counter = 0
+        jobDJ.run()
+    
 def Minimize_macromodel(mut_file_name, mut_structure):
     new_comfile_name = f'COM_FILE_{mut_file_name[:-4]}.com'
     # read in the com file.
@@ -98,13 +97,17 @@ def Minimize_macromodel(mut_file_name, mut_structure):
         with open(new_comfile_name, 'w') as new_comfile:
             new_comfile.write(comfile_string)
         mmodel_min_job = queue.JobControlJob(['macromodel', new_comfile_name])
-        jobDJ.addJob(mmodel_min_job)    
-    GenGrid(mut_file_name, mut_structure)
+        jobDJ.addJob(mmodel_min_job)
+        job_DJ_counter += 1
+        if job_DJ_counter == 600:
+            job_DJ_counter = 0
+            jobDJ.run()
+    GenGrid_Dock(mut_file_name, mut_structure)
 
 # GenGrid - mutation_file_name
     # minimized_file_name
 
-def GenGrid(min_file_name, mut_structure):
+def GenGrid_Dock(min_file_name, mut_structure):
     # remove ligands here from min file.
     # need to read the minimized structure file.
     # then remove the ligand>?!
@@ -131,17 +134,17 @@ def GenGrid(min_file_name, mut_structure):
     with open(grid_gen_file_name, "w") as grid_gen_inp_file:
         grid_gen_inp_file.write(grid_gen_spec)  
     grid_gen_job = queue.JobControlJob(["glide", grid_gen_file_name])
-    Dock(f"{min_file_name}_grid.zip")
+    Dock(grid_gen_job)
 
-# Save the grid_gen_file (receptor)
-
-    pass
-
-def Dock(grid_file_name):
-    # then dock ligands to the file
-    # Do
-
-    pass
+def Dock(grid_gen_job):
+    glide_XP_inp_spec = f"JOBNAME   glide_sp_dock\nOUTPUTDIR   Output/\nGRIDFILE   {modified_file_name[:-4]}_min_grid.zip\nLIGANDFILE   Combined_Ligands.mae\nPRECISION   XP\nWRITE_XP_DESC   True"
+    glide_XP_inp_file_name = f"{modified_file_name[:-4]}_glide_XP.inp"
+    with open(glide_XP_inp_file_name,"w") as glide_XP_inp_file:
+        glide_XP_inp_file.write(glide_XP_inp_spec)
+    
+    glide_Xp_job = queue.JobControlJob(["glide", glide_XP_inp_file_name])
+    glide_Xp_job.addPrereq(grid_gen_job)
+    jobDJ.addJob(glide_Xp_job) 
 
 def Analyse():
     pass
