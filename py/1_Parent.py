@@ -48,8 +48,12 @@ def Mutate(pos):
     #
     #    exit()
     job_counter = 0
+    
+
     for residue in complex_structure.residue:
         #handle long scripts here.
+        if residue.chain != 'B':
+            continue
         original_residue = residue
         original_residue_name = original_residue.pdbres.strip()
         original_chain_id = original_residue.chain

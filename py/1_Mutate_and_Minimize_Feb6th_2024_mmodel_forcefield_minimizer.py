@@ -28,6 +28,8 @@ non_standard_aa_conversion = {'ARN':'ARG','ASH':'ASP','GLH':'GLU','LYN':'LYS','H
 
 minimization_options = MinimizationOptions(opls_version=16, nonbond_cutoff=14.0, max_step=1500, energy_convergence=5e-09, gradient_convergence=0.05, line_search_method=1, min_method=0, no_restrain_zob=False, bend_conj_amines=False, perturb=False, restraints=None, constraints=None, debug_outfile=None)
 
+mutation_file = open("mutation_list.txt", "a")
+
 for residue in complex_structure.residue:
     if residue.chain != 'B':
         continue
@@ -47,11 +49,24 @@ for residue in complex_structure.residue:
     for new_residue_name in amino_acids:
         if new_residue_name == original_residue_name:
             continue
+        mutation_file.append(original_residue, new_residue_name)
+        # make a list of all amino acid mutations to be made:
+        # parse info of the original amino acid, and the name of the new one, obviously the copy structure to work with.
+
+mutation_file.close()
+
+# loop through the mutations, mpi pool to complete further code.
 
         # Make a copy of the protein_structure
         mutated_structure = complex_structure.copy()
         # Mutate the residue for the chosen alternative residue     
-        
+        # Function to be used for mpi pooling... up to 600 cpus...
+        # list all mutations - and put into a file, or array to be selected from...
+        # parse all mutations to the mpi function.
+        # should contain mutation, and minimize, and then save file.
+
+        # 
+
         # Minimize entire protein
         build.mutate(mutated_structure, original_residue.atom[1], new_residue_name)
         # minimize the structure, using local minimization around the mutation.
