@@ -28,7 +28,7 @@ non_standard_aa_conversion = {'ARN':'ARG','ASH':'ASP','GLH':'GLU','LYN':'LYS','H
 
 minimization_options = MinimizationOptions(opls_version=16, nonbond_cutoff=14.0, max_step=1500, energy_convergence=5e-09, gradient_convergence=0.05, line_search_method=1, min_method=0, no_restrain_zob=False, bend_conj_amines=False, perturb=False, restraints=None, constraints=None, debug_outfile=None)
 
-mutation_file = open("mutation_list.txt", "a")
+mutation_file = open("mutation_list3.txt", "a")
 
 for residue in complex_structure.residue:
     if residue.chain != 'B':
@@ -49,14 +49,23 @@ for residue in complex_structure.residue:
     for new_residue_name in amino_acids:
         if new_residue_name == original_residue_name:
             continue
-        mutation_file.append(original_residue, new_residue_name)
+        mutation_file.write(f'{original_residue.atom[1]},{new_residue_name}\n')
         # make a list of all amino acid mutations to be made:
         # parse info of the original amino acid, and the name of the new one, obviously the copy structure to work with.
 
 mutation_file.close()
 
+# works.
+# want to see that you can mutate using the info provided by the text file.
+"""
+with open("mutation_list3.txt") as mutation_file:
+    one_line = mutation_file.readline()
+    mutated_structure = complex_structure.copy()
+    build.mutate(mutated_structure, original_residue.atom[1], new_residue_name)
+    pass
+"""
 # loop through the mutations, mpi pool to complete further code.
-
+"""
         # Make a copy of the protein_structure
         mutated_structure = complex_structure.copy()
         # Mutate the residue for the chosen alternative residue     
@@ -82,6 +91,7 @@ mutation_file.close()
         with structure.StructureWriter(modified_file_name) as writer:
             writer.append(mutated_structure)
         continue
+"""
         #"""
         ## 2. Minimize the file, using default parameters, and an implicit membrane. Prime minimization used. 
         #minimiz_file_text = f"STRUCT_FILE {modified_file_name}\nPRIME_TYPE  REAL_MIN\nSELECT  asl = all\nUSE_CRYSTAL_SYMMETRY  no\nUSE_RANDOM_SEED yes\nSEED  0\nEXT_DIEL  80.00\nUSE_MEMBRANE  yes"
