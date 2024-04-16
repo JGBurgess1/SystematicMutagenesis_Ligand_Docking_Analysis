@@ -4,6 +4,7 @@ from schrodinger.forcefield.minimizer import minimize_structure, minimize_substr
 from schrodinger.structutils import measure
 from schrodinger.structutils import analyze
 import argparse
+import time
 import multiprocessing as mp # doesn't work with schrodinger, use JobDJ
 
 import threading as th # doesnt work with schrodinger - use JobDJ
@@ -59,9 +60,16 @@ mutation_file.close()
 # want to see that you can mutate using the info provided by the text file.
 
 with open("mutation_list3.txt") as mutation_file:
+    
     atom, new_res = mutation_file.readline().split(",")
+    atom_num = int(atom[atom.find('(')+1:atom.find(')')])
     mutated_structure = complex_structure.copy()
-    build.mutate(mutated_structure, atom, new_res)
+    build.mutate(mutated_structure, atom_num, new_res.strip())
+    start_time = time.time()
+    minimize_structure(mutated_structure, minimization_options)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(elapsed_time)
     with structure.StructureWriter('test_file.mae') as writer:
             writer.append(mutated_structure)
     pass
