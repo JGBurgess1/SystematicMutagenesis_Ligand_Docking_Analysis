@@ -57,13 +57,15 @@ mutation_file.close()
 
 # works.
 # want to see that you can mutate using the info provided by the text file.
-"""
+
 with open("mutation_list3.txt") as mutation_file:
-    one_line = mutation_file.readline()
+    atom, new_res = mutation_file.readline().split(",")
     mutated_structure = complex_structure.copy()
-    build.mutate(mutated_structure, original_residue.atom[1], new_residue_name)
+    build.mutate(mutated_structure, atom, new_res)
+    with structure.StructureWriter('test_file.mae') as writer:
+            writer.append(mutated_structure)
     pass
-"""
+
 # loop through the mutations, mpi pool to complete further code.
 """
         # Make a copy of the protein_structure
