@@ -12,7 +12,7 @@ schrodinger_dir = os.environ.get("SCHRODINGER")
 # Function to execute the Schrödinger Python script
 def run_schrodinger_script(rank):
     # Path to your Schrödinger Python script
-    schrodinger_script_path = "1_Mutate_and_Minimize_April17th_2024.py"
+    schrodinger_script_path = "2_Mutate_and_Minimize.py"
 
     # Command to execute the script with MPI rank as argument
     command = [schrodinger_dir + "/run", schrodinger_script_path, "-r", str(rank)]
