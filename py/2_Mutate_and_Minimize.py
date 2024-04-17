@@ -76,7 +76,7 @@ def mutate_and_minimize():
         print(new_mutation[0])
         atom_num = new_mutation[0][new_mutation[0].find('(')+1:new_mutation[0].find(')')]
         atom_num = int(atom_num)
-        mutated_structure = structure.copy()
+        mutated_structure = complex_structure.copy()
         build.mutate(mutated_structure, atom_num, new_mutation[1].strip())
         minimize_structure(mutated_structure, minimization_options)
         print(f'{rank} RANK, Mutation and Minimization complete. {new_mutation}')
