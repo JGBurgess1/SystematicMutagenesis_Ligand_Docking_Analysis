@@ -33,7 +33,7 @@ if __name__ == "__main__":
         # Call the function to execute the Schrödinger script
         else: 
             signal = comm.recv(source=0)
-            print(signal + rank)
+            print(signal,  rank)
             if signal == 'Generated Mutation List':
                 run_schrodinger_script(rank)
     else:
