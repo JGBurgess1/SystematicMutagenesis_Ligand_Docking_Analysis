@@ -39,4 +39,4 @@ if __name__ == "__main__":
     else:
         # If not using MPI, run the script normally
         print("Running without MPI")
-        run_schrodinger_script(0)
+        run_schrodinger_script(-1)
