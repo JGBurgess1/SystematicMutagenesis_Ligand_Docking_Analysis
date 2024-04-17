@@ -1,8 +1,8 @@
-from schrodinger import structure #, utility
-from schrodinger.structutils import build
-from schrodinger.forcefield.minimizer import minimize_structure, minimize_substructure, MinimizationOptions
-from schrodinger.structutils import measure
-from schrodinger.structutils import analyze
+from schrodinger import structure #, utility # type: ignore
+from schrodinger.structutils import build # type: ignore
+from schrodinger.forcefield.minimizer import minimize_structure, minimize_substructure, MinimizationOptions # type: ignore
+from schrodinger.structutils import measure # type: ignore
+from schrodinger.structutils import analyze # type: ignore
 import argparse
 import time
 import multiprocessing as mp # doesn't work with schrodinger, use JobDJ
