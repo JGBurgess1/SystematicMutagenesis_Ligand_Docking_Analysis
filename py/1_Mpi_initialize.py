@@ -12,7 +12,8 @@ def run_schrodinger_script(rank):
     schrodinger_script_path = "1_Mutate_and_Minimize_April17th_2024.py"
 
     # Command to execute the script with MPI rank as argument
-    command = ["${SCHRODINGER}/run", schrodinger_script_path, "-r", str(rank)]
+    command = ["$SCHRODINGER/run", schrodinger_script_path, "-r", str(rank)]
+    print(command)
 
     # Execute the command
     subprocess.run(command)
