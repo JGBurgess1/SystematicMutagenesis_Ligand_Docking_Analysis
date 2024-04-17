@@ -76,8 +76,13 @@ def mutate_and_minimize(mutation):
     pass
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     generate_mutations()
     with closing(mp.Pool(24)) as pool:
+=======
+    generate_mutations(complex_structure)
+    with closing(mp.Pool(20)) as pool:
+>>>>>>> 3ae837dd90a2cb3a875064488836327cf83011bf
         pool.map(mutate_and_minimize, mutation_arr)
 
     # loop through the mutations, mpi pool to complete further code.
