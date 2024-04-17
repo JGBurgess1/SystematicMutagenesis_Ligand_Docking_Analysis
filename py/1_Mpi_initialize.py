@@ -26,11 +26,14 @@ if __name__ == "__main__":
     if size > 1:
         # Distribute work among MPI processes
         if rank == 0:
-            print(f"Running with {size} MPI processes")
-
+            run_schrodinger_script(-1)
+            for dest_rank in range(1, size):
+                comm.send('Generated Mutation List', dest=dest_rank)
         # Call the function to execute the Schrödinger script
-        run_schrodinger_script(rank)
-
+        else: 
+            signal = comm.recv(source=0)
+            if signal == 'Generated Mutation List':
+                run_schrodinger_script(rank)
     else:
         # If not using MPI, run the script normally
         print("Running without MPI")

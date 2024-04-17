@@ -84,8 +84,7 @@ def mutate_and_minimize():
         pass
 
 if __name__ == "__main__":
-    if rank == '0':
+    if rank == '-1':
         generate_mutations()
     else:
-        time.sleep(4) # give time for master process to generate the list of mutations
         mutate_and_minimize()
