@@ -15,7 +15,7 @@ def run_schrodinger_script(rank):
     schrodinger_script_path = "2_Mutate_and_Minimize.py"
 
     # Command to execute the script with MPI rank as argument
-    command = [schrodinger_dir + "/run", schrodinger_script_path, "-r", str(rank)]
+    command = [schrodinger_dir + "/run", schrodinger_script_path, '-c','prime_mmgbsa_test_Nov_16_1-out.mae','-l','Q203.mae',"-r", str(rank)]
     print(command)
 
     # Execute the command
