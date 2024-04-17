@@ -84,7 +84,7 @@ def mutate_and_minimize():
         pass
 
 if __name__ == "__main__":
-    if rank == '-1':
+    if rank == -1:
         generate_mutations()
     else:
         mutate_and_minimize()
