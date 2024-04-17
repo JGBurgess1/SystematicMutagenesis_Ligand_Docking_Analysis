@@ -4,7 +4,6 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Check Centroid")
 parser.add_argument("-c", "--complex", required=True, help="Path to the protein structure file (mae format)")
-parser.add_argument("-l", "--ligand", required=True, help="Path to the ligand structure file (mae format)")
 
 args = parser.parse_args()
 
