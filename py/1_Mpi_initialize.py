@@ -9,7 +9,7 @@ size = comm.Get_size()
 # Function to execute the Schrödinger Python script
 def run_schrodinger_script(rank):
     # Path to your Schrödinger Python script
-    schrodinger_script_path = "1_Mutate_and_Minimize_Feb6th_2024_mmodel_forcefield_minimizer.py"
+    schrodinger_script_path = "1_Mutate_and_Minimize_April17th_2024.py"
 
     # Command to execute the script with MPI rank as argument
     command = ["${SCHRODINGER}/run", schrodinger_script_path, "-r", str(rank)]
