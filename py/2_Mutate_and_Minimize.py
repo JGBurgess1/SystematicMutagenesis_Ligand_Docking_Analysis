@@ -73,7 +73,6 @@ def mutate_and_minimize():
         for line in lines:
             mutation_arr.append(line.split(","))
     for new_mutation in mutation_arr[start_index:end_index]:
-        print(new_mutation[0])
         atom_num = new_mutation[0][new_mutation[0].find('(')+1:new_mutation[0].find(')')]
         atom_num = int(atom_num)
         mutated_structure = complex_structure.copy()
