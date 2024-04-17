@@ -12,7 +12,7 @@ def run_schrodinger_script(rank):
     schrodinger_script_path = "1_Mutate_and_Minimize_Feb6th_2024_mmodel_forcefield_minimizer.py"
 
     # Command to execute the script with MPI rank as argument
-    command = ["${SCHRODINGER}/run", schrodinger_script_path, rank]
+    command = ["${SCHRODINGER}/run", schrodinger_script_path, "-r", str(rank)]
 
     # Execute the command
     subprocess.run(command)
