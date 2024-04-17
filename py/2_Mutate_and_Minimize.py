@@ -61,7 +61,7 @@ def generate_mutations():
         for new_residue_name in amino_acids:
             if new_residue_name == original_residue_name:
                 continue
-            mutation_file.write(f'{original_residue.atom[1]},{new_residue_name},{original_residue.chain}_{original_residue.index}\n')
+            mutation_file.write(f'{original_residue.atom[1]},{new_residue_name},{original_residue.chain}_{original_residue.resnum}\n')
             # make a list of all amino acid mutations to be made:
     mutation_file.close()
 
