@@ -29,9 +29,11 @@ if __name__ == "__main__":
             run_schrodinger_script(-1)
             for dest_rank in range(1, size):
                 comm.send('Generated Mutation List', dest=dest_rank)
+            run_schrodinger_script(rank)
         # Call the function to execute the Schrödinger script
         else: 
             signal = comm.recv(source=0)
+            print(signal + rank)
             if signal == 'Generated Mutation List':
                 run_schrodinger_script(rank)
     else:
