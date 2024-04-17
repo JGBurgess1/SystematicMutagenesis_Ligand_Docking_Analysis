@@ -78,13 +78,18 @@ def mutate_and_minimize():
         mutated_structure = complex_structure.copy()
         build.mutate(mutated_structure, atom_num, new_mutation[1].strip())
         minimize_structure(mutated_structure, minimization_options)
+        ligand_in_structure = analyze.find_ligands(mutated_structure)
+        centroid = transform.get_centroid(ligand_in_structure[0].st)
+        centroid = centroid[0:3]
+
+        ligand_atoms = analyze.evaluate_asl(mutated_structure, "ligand")
+        mutated_structure.deleteAtoms(ligand_atoms)
+
         print(f'{rank} RANK, Mutation and Minimization complete. {new_mutation}')
         new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.mae'
         with structure.StructureWriter(new_file_name) as writer:
                 writer.append(mutated_structure)
-        ligand_in_structure = analyze.find_ligands(mutated_structure)
-        centroid = transform.get_centroid(ligand_in_structure[0].st)
-        centroid = centroid[0:3]
+        
 
         # generate a grid for docking
         grid_gen_spec = f"JOBNAME   gridgen\nOUTPUTDIR   April_Output/\nGRID_CENTER   {centroid[0]}, {centroid[1]}, {centroid[2]}\nRECEP_FILE   {new_file_name}\nGRIDFILE   {new_file_name[:-4]}_grid.zip"
@@ -96,7 +101,7 @@ def mutate_and_minimize():
         job_dj.run()
 
         # dock the combined ligands to the mutated structure
-        glide_XP_inp_spec = f"JOBNAME   glide_xp_dock\nOUTPUTDIR   April_Output/\nGRIDFILE   {new_file_name[:-4]}_min_grid.zip\nLIGANDFILE   Combined_Ligands.mae\nPRECISION   XP"
+        glide_XP_inp_spec = f"JOBNAME   glide_xp_dock\nOUTPUTDIR   April_Output/\nGRIDFILE   {new_file_name[:-4]}_grid.zip\nLIGANDFILE   Combined_Ligands.mae\nPRECISION   XP"
         glide_XP_inp_file_name = f"{new_file_name[:-4]}_glide_XP.inp"
         with open(glide_XP_inp_file_name,"w") as glide_XP_inp_file:
             glide_XP_inp_file.write(glide_XP_inp_spec)
