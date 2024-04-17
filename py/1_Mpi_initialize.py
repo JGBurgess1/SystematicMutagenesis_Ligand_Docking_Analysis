@@ -1,10 +1,13 @@
 from mpi4py import MPI
 import subprocess
+import os
 
 # Initialize MPI
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
+
+schrodinger_dir = os.environ.get("SCHRODINGER")
 
 # Function to execute the Schrödinger Python script
 def run_schrodinger_script(rank):
@@ -12,7 +15,7 @@ def run_schrodinger_script(rank):
     schrodinger_script_path = "1_Mutate_and_Minimize_April17th_2024.py"
 
     # Command to execute the script with MPI rank as argument
-    command = ["$SCHRODINGER/run", schrodinger_script_path, "-r", str(rank)]
+    command = [schrodinger_dir + "/run", schrodinger_script_path, "-r", str(rank)]
     print(command)
 
     # Execute the command
