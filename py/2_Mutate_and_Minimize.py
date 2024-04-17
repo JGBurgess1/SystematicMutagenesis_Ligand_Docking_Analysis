@@ -2,13 +2,11 @@ from schrodinger import structure #, utility # type: ignore
 from schrodinger.structutils import build # type: ignore
 from schrodinger.forcefield.minimizer import minimize_structure, minimize_substructure, MinimizationOptions # type: ignore
 from schrodinger.structutils import measure # type: ignore
-from schrodinger.structutils import analyze # type: ignore
+from schrodinger.structutils import analyze, transform # type: ignore
+from schrodinger.job import queue # type: ignore
 import argparse
 import time
-import multiprocessing as mp # doesn't work with schrodinger, use JobDJ
 import numpy as np
-from contextlib import closing
-import threading as th # doesnt work with schrodinger - use JobDJ
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description="Perform mutations, grid generation, and docking for protein-ligand interactions.")
@@ -39,6 +37,8 @@ amino_acids = ["ALA", "CYS", "ASP", "GLU","PHE","GLY","HIS","ILE","LYS","LEU","M
 non_standard_aa_conversion = {'ARN':'ARG','ASH':'ASP','GLH':'GLU','LYN':'LYS','HID':'HIS','HIE':'HIS','HIP':'HIS'}
 
 minimization_options = MinimizationOptions(opls_version=16, nonbond_cutoff=14.0, max_step=1500, energy_convergence=5e-09, gradient_convergence=0.05, line_search_method=1, min_method=0, no_restrain_zob=False, bend_conj_amines=False, perturb=False, restraints=None, constraints=None, debug_outfile=None)
+
+job_dj = queue.JobDJ()
 
 def generate_mutations():
     mutation_file = open("mutation_list.txt", "a")
@@ -79,9 +79,33 @@ def mutate_and_minimize():
         build.mutate(mutated_structure, atom_num, new_mutation[1].strip())
         minimize_structure(mutated_structure, minimization_options)
         print(f'{rank} RANK, Mutation and Minimization complete. {new_mutation}')
-        with structure.StructureWriter(f'{new_mutation[2]}_{new_mutation[1].strip()}.mae') as writer:
+        new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.mae'
+        with structure.StructureWriter(new_file_name) as writer:
                 writer.append(mutated_structure)
-        pass
+        ligand_in_structure = analyze.find_ligands(mutated_structure)
+        centroid = transform.get_centroid(ligand_in_structure[0].st)
+        centroid = centroid[0:3]
+
+        # generate a grid for docking
+        grid_gen_spec = f"JOBNAME   gridgen\nOUTPUTDIR   April_Output/\nGRID_CENTER   {centroid[0]}, {centroid[1]}, {centroid[2]}\nRECEP_FILE   {new_file_name}\nGRIDFILE   {new_file_name[:-4]}_grid.zip"
+        grid_gen_file_name = f"{new_file_name[:-4]}_grid_gen.inp"
+        with open(grid_gen_file_name, "w") as grid_gen_inp_file:
+            grid_gen_inp_file.write(grid_gen_spec)
+        grid_gen_job = queue.JobControlJob(["glide", grid_gen_file_name])
+        job_dj.addJob(grid_gen_job)
+        job_dj.run()
+
+        # dock the combined ligands to the mutated structure
+        glide_XP_inp_spec = f"JOBNAME   glide_xp_dock\nOUTPUTDIR   April_Output/\nGRIDFILE   {new_file_name[:-4]}_min_grid.zip\nLIGANDFILE   Combined_Ligands.mae\nPRECISION   XP"
+        glide_XP_inp_file_name = f"{new_file_name[:-4]}_glide_XP.inp"
+        with open(glide_XP_inp_file_name,"w") as glide_XP_inp_file:
+            glide_XP_inp_file.write(glide_XP_inp_spec)
+        
+        glide_xp_job = queue.JobControlJob(["glide", glide_XP_inp_file_name])
+        job_dj.addJob(glide_xp_job)
+        job_dj.run()
+        # summarize results at end.
+        # check if worked?!
 
 if __name__ == "__main__":
     if rank == -1:

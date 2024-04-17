@@ -1,5 +1,5 @@
-from schrodinger import structure #,  utility  # type: ignore
-from schrodinger.structutils import build, analyze, transform  # type: ignore
+from schrodinger import structure
+from schrodinger.structutils import analyze, transform
 import argparse
 
 parser = argparse.ArgumentParser(description="Check Centroid")
