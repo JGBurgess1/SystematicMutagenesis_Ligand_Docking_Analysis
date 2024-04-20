@@ -30,6 +30,8 @@ minimization_options = MinimizationOptions(opls_version=16, nonbond_cutoff=14.0,
 
 job_dj = queue.JobDJ()
 
+rank = int(args.rank)
+
 def generate_mutations():
     mutation_file = open("mutation_list.txt", "a")
     for residue in complex_structure.residue:
@@ -60,7 +62,7 @@ def mutate_and_minimize():
         for line in lines:
             mutation_arr.append(line.split(","))
     
-    rank = int(args.rank)
+    
     size = 240
     num_mutations = len(mutation_arr)
     chunk_size = num_mutations//size
