@@ -86,11 +86,11 @@ def mutate_and_minimize():
         mutated_structure.deleteAtoms(ligand_atoms)
 
         print(f'{rank} RANK, Mutation and Minimization complete. {new_mutation}')
-        new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.mae'
+        new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.pdb'
         with structure.StructureWriter(new_file_name) as writer:
                 writer.append(mutated_structure)
         
-
+"""
         # generate a grid for docking
         grid_gen_spec = f"JOBNAME   gridgen\nOUTPUTDIR   April_Output/\nGRID_CENTER   {centroid[0]}, {centroid[1]}, {centroid[2]}\nRECEP_FILE   {new_file_name}\nGRIDFILE   {new_file_name[:-4]}_grid.zip"
         grid_gen_file_name = f"{new_file_name[:-4]}_grid_gen.inp"
@@ -111,7 +111,7 @@ def mutate_and_minimize():
         job_dj.run()
         # summarize results at end.
         # check if worked?!
-
+"""
 if __name__ == "__main__":
     if rank == -1:
         generate_mutations()
