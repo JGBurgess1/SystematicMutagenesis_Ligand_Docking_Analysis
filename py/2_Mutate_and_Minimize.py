@@ -21,16 +21,6 @@ ligand_structure = structure.StructureReader.read(args.ligand)
 # Load the protein structure
 complex_structure = structure.StructureReader.read(args.complex)
 
-rank = int(args.rank)
-size = 600
-num_mutations = 9956
-
-chunk_size = 9956//600 # = 16
-remainder = 9956%600 # = 556
-
-start_index = rank*chunk_size + min(rank, remainder)
-end_index = start_index + chunk_size + (1 if rank < remainder else 0)
-
 # Define the amino acids to mutate to (three-letter codes)
 amino_acids = ["ALA", "CYS", "ASP", "GLU","PHE","GLY","HIS","ILE","LYS","LEU","MET","ASN","PRO","GLN","ARG","SER","THR","VAL","TRP","TYR"]
 
@@ -43,9 +33,6 @@ job_dj = queue.JobDJ()
 def generate_mutations():
     mutation_file = open("mutation_list.txt", "a")
     for residue in complex_structure.residue:
-        if residue.chain != 'B':
-            continue
-
         original_residue = residue
         original_residue_name = original_residue.pdbres.strip()
         original_chain_id = original_residue.chain
@@ -72,6 +59,16 @@ def mutate_and_minimize():
         lines = mutation_file.readlines()
         for line in lines:
             mutation_arr.append(line.split(","))
+    
+    rank = int(args.rank)
+    size = 240
+    num_mutations = len(mutation_arr)
+    chunk_size = num_mutations//size
+    remainder = num_mutations%size
+
+    start_index = rank*chunk_size + min(rank, remainder)
+    end_index = start_index + chunk_size + (1 if rank < remainder else 0)
+
     for new_mutation in mutation_arr[start_index:end_index]:
         atom_num = new_mutation[0][new_mutation[0].find('(')+1:new_mutation[0].find(')')]
         atom_num = int(atom_num)
