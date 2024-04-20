@@ -1,3 +1,4 @@
+# aweness.
 from mpi4py import MPI # type: ignore
 import subprocess
 import os
@@ -17,7 +18,7 @@ def run_schrodinger_script(rank):
     # Command to execute the script with MPI rank as argument
     command = [schrodinger_dir + "/run", schrodinger_script_path, '-c','prime_mmgbsa_test_Nov_16_1-out.mae','-l','Q203.mae',"-r", str(rank)]
     print(command)
-
+    print()
     # Execute the command
     subprocess.run(command)
 
