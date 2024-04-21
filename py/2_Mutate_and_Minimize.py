@@ -34,6 +34,8 @@ job_dj = queue.JobDJ()
 rank = int(args.rank)
 
 def generate_mutations():
+    if os.path.exists("mutation_list.txt"):
+        return
     mutation_file = open("mutation_list.txt", "a")
     for residue in complex_structure.residue:
         original_residue = residue
