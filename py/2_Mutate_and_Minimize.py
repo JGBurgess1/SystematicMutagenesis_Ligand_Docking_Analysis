@@ -79,7 +79,7 @@ def mutate_and_minimize():
         new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.pdb'
         if os.path.exists(new_file_name):
             continue
-        
+        #remove afterwards
         mutated_structure = complex_structure.copy()
         build.mutate(mutated_structure, atom_num, new_mutation[1].strip())
         minimize_structure(mutated_structure, minimization_options)
