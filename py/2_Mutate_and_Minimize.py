@@ -7,6 +7,7 @@ from schrodinger.job import queue # type: ignore
 import argparse
 import time
 import numpy as np
+import os
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description="Perform mutations, grid generation, and docking for protein-ligand interactions.")
@@ -74,6 +75,11 @@ def mutate_and_minimize():
     for new_mutation in mutation_arr[start_index:end_index]:
         atom_num = new_mutation[0][new_mutation[0].find('(')+1:new_mutation[0].find(')')]
         atom_num = int(atom_num)
+
+        new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.pdb'
+        if os.path.exists(new_file_name):
+            continue
+        
         mutated_structure = complex_structure.copy()
         build.mutate(mutated_structure, atom_num, new_mutation[1].strip())
         minimize_structure(mutated_structure, minimization_options)
@@ -85,7 +91,7 @@ def mutate_and_minimize():
         mutated_structure.deleteAtoms(ligand_atoms)
 
         print(f'{rank} RANK, Mutation and Minimization complete. {new_mutation}')
-        new_file_name = f'{new_mutation[2].strip()}_{new_mutation[1].strip()}.pdb'
+        
         with structure.StructureWriter(new_file_name) as writer:
                 writer.append(mutated_structure)
         
