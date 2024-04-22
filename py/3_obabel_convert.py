@@ -19,6 +19,8 @@ def convert():
     start_index = rank*chunk_size + min(rank, remainder)
     end_index = start_index + chunk_size + (1 if rank < remainder else 0)
 
+    os.chdir("1_mutate_minimized")
+
     for file in arr[start_index:end_index]:
         new_name = f"{file}qt"
         subprocess.run(['obabel',file,'-O',new_name])
