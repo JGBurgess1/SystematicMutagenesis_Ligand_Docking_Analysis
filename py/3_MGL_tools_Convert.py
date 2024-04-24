@@ -22,7 +22,7 @@ def convert():
     os.chdir("1_mutate_minimized")
 
     for file in arr[start_index:end_index]:
-        subprocess.run(['python2','~/.conda/envs/open_docking_env/bin/prepare_receptor4.py','-r',file, '-A', 'none','-U','nphs'])
+        subprocess.run(['python2','/home/jburgess1/.conda/envs/open_docking_env/bin/prepare_receptor4.py','-r',file, '-A', 'none','-U','nphs'])
 
 if __name__ == "__main__":
     convert()
