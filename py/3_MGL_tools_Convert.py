@@ -2,7 +2,7 @@ import argparse
 import os
 import subprocess
 
-parser = argparse.ArgumentParser(description="Converts pdb files to pdbqt files via openbabel.")
+parser = argparse.ArgumentParser(description="Converts pdb files to pdbqt files via mgltools.")
 parser.add_argument("-r", "--rank", required=True, help="The rank of the mpi process")
 args = parser.parse_args()
 rank = int(args.rank)
@@ -22,8 +22,7 @@ def convert():
     os.chdir("1_mutate_minimized")
 
     for file in arr[start_index:end_index]:
-        new_name = f"{file}qt"
-        subprocess.run(['obabel',file,'-O',new_name, '--partialcharge','gasteiger'])
+        subprocess.run(['python2','~/.conda/envs/open_docking_env/bin/prepare_receptor4.py','-r',file, '-A', 'none','-U','nphs'])
 
 if __name__ == "__main__":
     convert()
