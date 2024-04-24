@@ -10,7 +10,7 @@ size = comm.Get_size()
 
 def run_mgl_tools(rank):
     # Command to execute the script with MPI rank as argument
-    command = ['python', '3_MGL_tools_Convert.py', '-r', str(rank)]
+    command = ['python', '3_MGL_tools_Convert.py', '-r', str(rank),'-s',str(size)]
     print(command)
     # Execute the command
     subprocess.run(command)

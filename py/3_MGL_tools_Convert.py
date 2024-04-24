@@ -4,12 +4,12 @@ import subprocess
 
 parser = argparse.ArgumentParser(description="Converts pdb files to pdbqt files via mgltools.")
 parser.add_argument("-r", "--rank", required=True, help="The rank of the mpi process")
+parser.add_argument("-s", "--size", required=True, help="The size of the mpi process pool")
 args = parser.parse_args()
 rank = int(args.rank)
+size = int(args.size)
 
 def convert():
-    size = 240
-    
     arr = os.listdir("1_mutate_minimized")
     
     num_mutations = len(arr)
