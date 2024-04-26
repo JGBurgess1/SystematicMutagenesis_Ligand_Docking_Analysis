@@ -13,6 +13,7 @@ def convert():
     arr = os.listdir("1_mutate_minimized")
     
     num_mutations = len(arr)
+    print(num_mutations)
     chunk_size = num_mutations//size
     remainder = num_mutations%size
 
